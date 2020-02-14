@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rBody;
     private Animator anim;
     private bool isFacingRight = true;
-    private bool isCrouching = false;
+   
 
     // Start is called before the first frame update
     void Start()
@@ -25,62 +25,34 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
-    // Physics
     void Update()
     {
         Vector2 movement = Vector2.zero;
-        float horiz = Input.GetAxis("Horizontal");
-
+        float horiz = speed;
+        rBody.velocity = new Vector2(horiz * speed, rBody.velocity.y);
         isGrounded = GroundCheck();
 
         // Jumping code will go here!
-        if(isGrounded && Input.GetAxis("Jump") > 0)
+        
+    }
+    // Physics
+    void FixedUpdate()
+    {
+        if (isGrounded && Input.GetAxis("Jump") > 0)
         {
             rBody.AddForce(new Vector2(0.0f, jumpForce));
             isGrounded = false;
         }
+        anim.SetFloat("speed", Mathf.Abs(rBody.velocity.x));
+        anim.SetBool("jump", isGrounded);
+        anim.SetBool("fall", false);
 
-        rBody.velocity = new Vector2(horiz * speed, rBody.velocity.y);
-
-
-        // Check if sprite is crouching
-        if(isGrounded && rBody.velocity.x == 0 && Input.GetAxis("Vertical") < 0)
-        {
-            isCrouching = true;
-        }
-        else
-        {
-            isCrouching = false;
-        }
-
-        // Check if sprite needs to be flipped
-        if(isFacingRight && rBody.velocity.x < 0)
-        {
-            Flip();
-        }
-        else if (!isFacingRight && rBody.velocity.x > 0)
-        {
-            Flip();
-        }
-
-
-        anim.SetFloat("xSpeed", Mathf.Abs(rBody.velocity.x));
-        anim.SetFloat("ySpeed", rBody.velocity.y);
-        anim.SetBool("isGrounded", isGrounded);
-        anim.SetBool("isCrouching", isCrouching);
+        isGrounded = true;
     }
 
     private bool GroundCheck()
     {
         return Physics2D.OverlapCircle(groundCheckPos.position, groundCheckRadius, whatIsGround); ;
     }
-
-    private void Flip()
-    {
-        Vector3 temp = transform.localScale;
-        temp.x *= -1;
-        transform.localScale = temp;
-
-        isFacingRight = !isFacingRight;
-    }
+       
 }
