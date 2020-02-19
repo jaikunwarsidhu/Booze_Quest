@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform groundCheckPos;
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private float groundCheckRadius = 0.15f;
+    [SerializeField] private GameObject LoseColider;
 
     // Private variables
     private bool isGrounded = false;
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        LoseColider.transform.position = new Vector3(transform.position.x, LoseColider.transform.position.y, LoseColider.transform.position.z);
         Vector2 movement = Vector2.zero;
         float horiz = speed;
         rBody.velocity = new Vector2(horiz * speed, rBody.velocity.y);
